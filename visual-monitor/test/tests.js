@@ -41,7 +41,8 @@ var caps = selectedCaps ? capsConfig[selectedCaps] : undefined;
 var providerPrefix = process.env.PROVIDER_PREFIX ? process.env.PROVIDER_PREFIX + '-' : '';
 var testName = selectedCaps ? providerPrefix + selectedCaps : providerPrefix + 'default';
 
-var baseUrl = process.env.BASE_URL ? process.env.BASE_URL : 'http://pages.shoov.io';
+var baseUrl = process.env.BASE_URL ? process.env.BASE_URL : 'https://www.card.com';
+var testUrl = process.env.TEST_URL ? process.env.TEST_URL : 'https://www.card.com';
 
 var resultsCallback = process.env.DEBUG ? console.log : shoovWebdrivercss.processResults;
 
@@ -61,11 +62,17 @@ describe('Visual monitor testing', function() {
   it('should show the home page',function(done) {
     client
       .url(baseUrl)
-      .webdrivercss(testName + '.static', {
+      .webdrivercss(testName + '.homepage', {
         name: '1',
-        exclude: [],
-        remove: [],
-        hide: [],
+        exclude: [
+          // Clock flip card.
+          '#flip-clock .flip',
+        ],
+        hide: [
+          // Since the clock is flipping, we want to make sure nothing gets out
+          // of the frame, but keep the space.
+          '#flip-clock .flip'
+        ],
         screenWidth: selectedCaps == 'chrome' ? [640, 960, 1200] : undefined,
       }, resultsCallback)
       .call(done);
